@@ -3,8 +3,7 @@ const User = require('../models/user');
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }),
-      res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' }));
+    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }));
 };
 
 module.exports.findSpecificUser = (req, res) => {
@@ -33,13 +32,17 @@ module.exports.createUser = (req, res) => {
 
   User.create({ name, about, avatar })
     .then((user) => res.send({ data: user }))
-    .catch(() => res.status(500).send({ message: 'Произошла ошибка' }),
-      res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка' });
+      }
+    });
 };
 
 module.exports.modifyUser = (req, res) => {
-  const filter = req.user._id;
-
+  const filter = req.params;
   User.findOneAndUpdate(filter, { $set: req.body }, { new: true })
     .orFail(() => {
       const error = new Error('Пользователь по заданному id отсутствует в базе');
@@ -59,7 +62,7 @@ module.exports.modifyUser = (req, res) => {
 };
 
 module.exports.modifyAvatar = (req, res) => {
-  const filter = req.user._id;
+  const filter = req.params;
 
   User.findOneAndUpdate(filter, { $set: req.body }, { new: true })
     .orFail(() => {
