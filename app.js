@@ -10,7 +10,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
   req.user = {
-    _id: '60807a5139c6b521300aed24',
+    _id: '608549cd21137b38d46244e3',
   };
 
   next();
@@ -26,7 +26,7 @@ app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
 app.use((req, res) => {
-  res.send('Ошибка 404. Такой страницы не существует');
+  res.send({ message: 'Ошибка 404. Такой страницы не существует' });
 });
 
 app.listen(PORT, () => (`App listening on port ${PORT}`));

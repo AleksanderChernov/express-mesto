@@ -42,8 +42,8 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.modifyUser = (req, res) => {
-  const filter = req.params;
-  User.findOneAndUpdate(filter, { $set: req.body }, { new: true })
+  const filter = req.user._id;
+  User.findByIdAndUpdate(filter, { $set: req.body }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new Error('Пользователь по заданному id отсутствует в базе');
       error.statusCode = 404;
@@ -62,9 +62,8 @@ module.exports.modifyUser = (req, res) => {
 };
 
 module.exports.modifyAvatar = (req, res) => {
-  const filter = req.params;
-
-  User.findOneAndUpdate(filter, { $set: req.body }, { new: true })
+  const filter = req.user._id;
+  User.findByIdAndUpdate(filter, { $set: req.body }, { new: true, runValidators: true })
     .orFail(() => {
       const error = new Error('Пользователь по заданному id отсутствует в базе');
       error.statusCode = 404;
