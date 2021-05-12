@@ -52,29 +52,33 @@ module.exports.getUserInfo = (req, res, next) => {
 };
 
 module.exports.createUser = (req, res, next) => {
-  bcrypt.hash(req.body.password, 10)
-    .then((hash) => User.create({
-      email: req.body.email,
-      password: hash,
-    }))
-    .then((user) => res.status(201).send({
-      avatar: user.avatar,
-      name: user.name,
-      about: user.about,
-      _id: user._id,
-      email: user.email,
-    }))
-    .catch((err) => {
-      if (err.kind === 'ValidationError') {
-        next(new WrongInfoErr({ message: 'Переданы некорректные данные при обновлении пользователя' }));
-      } else if (err.name === 'MongoError' && err.code === 11000) {
-        next(new EmailDoubledErr('Такой e-mail уже существует в базе'));
-      } else if (err.statusCode === 400) {
-        next(new WrongInfoErr('Переданы некорректные данные при создании пользователя'));
-      } else {
-        next(err);
-      }
-    });
+  if (req.body.password.length >= 8) {
+    bcrypt.hash(req.body.password, 10)
+      .then((hash) => User.create({
+        email: req.body.email,
+        password: hash,
+      }))
+      .then((user) => res.status(201).send({
+        avatar: user.avatar,
+        name: user.name,
+        about: user.about,
+        _id: user._id,
+        email: user.email,
+      }))
+      .catch((err) => {
+        if (err.kind === 'ValidationError') {
+          next(new WrongInfoErr({ message: 'Переданы некорректные данные при обновлении пользователя' }));
+        } else if (err.name === 'MongoError' && err.code === 11000) {
+          next(new EmailDoubledErr('Такой e-mail уже существует в базе'));
+        } else if (err.statusCode === 400) {
+          next(new WrongInfoErr('Переданы некорректные данные при создании пользователя'));
+        } else {
+          next(err);
+        }
+      });
+  } else {
+    throw new WrongInfoErr('Переданы некорректные данные при создании пользователя');
+  }
 };
 
 module.exports.modifyUser = (req, res, next) => {
@@ -120,7 +124,7 @@ module.exports.login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.statusCode === 401) {
-        next(new WrongPassOrMail({ message: 'Передан неправильный e-mail или пароль' }));
+        next(new WrongPassOrMail('Передан неправильный e-mail или пароль'));
       } else {
         next(err);
       }

@@ -12,6 +12,7 @@ const { createUser, login } = require('./controllers/users');
 const errorHandler = require('./middlewares/error-handler');
 const NotFoundErr = require('./middlewares/errors/NotFoundErr.js');
 const auth = require('./middlewares/auth');
+const { loginValidator } = require('./middlewares/validator');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,8 +24,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', loginValidator, login);
+app.post('/signup', loginValidator, createUser);
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
