@@ -1,11 +1,12 @@
 const jwt = require('jsonwebtoken');
+const WrongPassOrMail = require('./errors/WrongPassOrMail.js');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const handleAuthError = (res) => {
-  res
-    .status(401)
-    .send({ message: 'Необходима авторизация' });
+  if (res.status(401)) {
+    throw new WrongPassOrMail('Необходима авторизация');
+  }
 };
 
 // eslint-disable-next-line consistent-return

@@ -1,6 +1,7 @@
 const express = require('express');
 require('dotenv').config();
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 
 const app = express();
 app.use(cookieParser());
@@ -8,6 +9,8 @@ app.use(cookieParser());
 const { PORT = 3000 } = process.env;
 const mongoose = require('mongoose');
 const { createUser, login } = require('./controllers/users');
+const errorHandler = require('./middlewares/error-handler');
+const NotFoundErr = require('./middlewares/errors/NotFoundErr.js');
 const auth = require('./middlewares/auth');
 
 app.use(express.json());
@@ -17,6 +20,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,
+  useUnifiedTopology: true,
 });
 
 app.post('/signin', login);
@@ -25,8 +29,11 @@ app.post('/signup', createUser);
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Ошибка 404. Такой страницы не существует' });
+app.use(() => {
+  throw new NotFoundErr('Ошибка 404. Такой страницы не существует');
 });
+
+app.use(errors());
+app.use(errorHandler);
 
 app.listen(PORT, () => (`App listening on port ${PORT}`));

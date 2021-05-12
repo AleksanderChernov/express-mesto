@@ -1,24 +1,23 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
-/* const jwt = require('jsonwebtoken');
+/* const { celebrate, Joi } = require('celebrate'); */
+const WrongPassOrMail = require('../middlewares/errors/WrongPassOrMail.js');
 
-const { NODE_ENV, JWT_SECRET } = process.env; */
+/* const { NODE_ENV, JWT_SECRET } = process.env; */
 
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    minlength: 2,
+    minlength: [2, 'Поле name должно содержать минимум 2 символа'],
     maxlength: 30,
     default: 'Жак-Ив Кусто',
-    /* required: true, */
   },
   about: {
     type: String,
-    minlength: 2,
+    minlength: [2, 'Поле about должно содержать минимум 2 символа'],
     maxlength: 30,
     default: 'Исследователь',
-    /* required: true, */
   },
   avatar: {
     type: String,
@@ -50,16 +49,13 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Неправильные почта или пароль'));
+        throw new WrongPassOrMail('Неправильные почта или пароль');
       }
-
       return bcrypt.compare(password, user.password)
         .then((matched) => {
           if (!matched) {
-            return Promise.reject(new Error('Неправильные почта или пароль'));
+            throw new WrongPassOrMail('Неправильные почта или пароль');
           }
-          /* jwt.sign({ _id: user._id },
-          NODE_ENV === 'production' ? JWT_SECRET : 'devsecret', { expiresIn: '7d' }); */
           return user;
         });
     });
