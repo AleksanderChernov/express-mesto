@@ -3,9 +3,9 @@ const {
   createCard, getCards, deleteCard, likeCard, dislikeCard,
 } = require('../controllers/cards');
 
-const { linkValidator, cardIdValidator } = require('../middlewares/validator');
+const { cardIdValidator, cardValidator } = require('../middlewares/validator');
 
-router.post('/', linkValidator, createCard);
+router.post('/', cardValidator, createCard);
 router.get('/', getCards);
 router.delete('/:cardId', cardIdValidator, deleteCard);
 router.put('/:cardId/likes', cardIdValidator, likeCard);

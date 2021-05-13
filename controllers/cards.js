@@ -42,11 +42,6 @@ module.exports.deleteCard = (req, res, next) => {
       }
     })
     .catch((err) => {
-      /* if (err.kind === 'ValidationError') {
-        next(new WrongInfoErr({ message: 'Переданы некорректные данные при удалении карточки' }));
-      } else if (err.statusCode === 404) {
-        throw new NotFoundErr('Карточка по заданному id отсутствует в базе');
-      } */
       next(err);
     });
 };

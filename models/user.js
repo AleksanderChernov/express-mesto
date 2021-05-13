@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
-/* const { celebrate, Joi } = require('celebrate'); */
 const WrongPassOrMail = require('../middlewares/errors/WrongPassOrMail.js');
-
-/* const { NODE_ENV, JWT_SECRET } = process.env; */
 
 const userSchema = new mongoose.Schema({
   name: {
