@@ -1,12 +1,16 @@
 # Проект Mesto фронтенд + бэкенд
 В данный момент можно найти по адресу https://ancherproject.nomoredomains.club/sign-up
 
+# Функциональность
+Можно регистрироваться, авторизовываться, все валидируется при помощи Joi,
+
 # Технологии:
--React
--БЭМ
--Mongo
--Express.js
--Mongoose
+-React  
+-БЭМ  
+-Mongo  
+-Express.js  
+-Mongoose  
+-Joi  
 
 # Планы:
 -Получить доступ к Монго на сервере
